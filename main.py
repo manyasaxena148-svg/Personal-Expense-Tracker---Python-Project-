@@ -20,6 +20,36 @@ def create_files():
         with open(BUDGET_FILE, "w") as file:
             file.write("0")
 
+from csv_storage import save_expense
+
+def add_expense(expenses):
+
+    print("--- Add Expense ---")
+
+    try:
+        amount = input("Enter amount: ")
+
+        if amount < 0:
+            print("Invalid amount")
+            return
+
+    except ValueError:
+        print("Invalid amount")
+
+    category = input("Enter category: ")
+    date = input("Enter date: ")
+
+    expense = {
+        "Amount": amount,
+        "Category": category,
+        "Date": date
+    }
+
+    expenses.append(expense)
+    save_expense(expense)
+
+    print("Expense added!")
+
 
 # 2. Read all expenses
 def get_expenses():
