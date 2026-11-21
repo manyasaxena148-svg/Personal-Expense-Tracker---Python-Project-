@@ -273,10 +273,12 @@ if __name__ == "__main__":
 
 
 # Manya's part 
+
 import csv
 import os
 
 FILE_NAME = "expenses.csv"
+
 
 def initialize_file():
 
@@ -284,8 +286,6 @@ def initialize_file():
         with open(FILE_NAME, "w", newline="") as file:
             writer = csv.writer(file)
             writer.writerow(["amount", "category", "date"])
-
-
 
 
 def save_expense(expense):
@@ -298,6 +298,7 @@ def save_expense(expense):
             expense["category"],
             expense["date"]
         ])
+
 
 def read_expenses():
 
@@ -316,7 +317,3 @@ def read_expenses():
 
     return expenses
 
-        for row in reader:
-            expenses.append(row)
-
-    return expenses
