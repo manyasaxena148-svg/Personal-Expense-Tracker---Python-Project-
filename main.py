@@ -27,7 +27,7 @@ def add_expense(expenses):
     print("--- Add Expense ---")
 
     try:
-        amount = input("Enter amount: ")
+        amount = float(input("Enter amount: "))
 
         if amount < 0:
             print("Invalid amount")
