@@ -280,10 +280,11 @@ FILE_NAME = "expenses.csv"
 
 def initialize_file():
 
-    if os.path.exists(FILE_NAME):
-        with open(FILE_NAME, "w") as file:
+    if not os.path.exists(FILE_NAME):
+        with open(FILE_NAME, "w", newline="") as file:
             writer = csv.writer(file)
             writer.writerow(["amount", "category", "date"])
+
 
 
 def save_expense(expense):
