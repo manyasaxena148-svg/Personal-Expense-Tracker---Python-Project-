@@ -299,15 +299,22 @@ def save_expense(expense):
             expense["date"]
         ])
 
-
-
 def read_expenses():
 
     expenses = []
 
-    with open(FILE_NAME, "r") as file:
+    if not os.path.exists(FILE_NAME):
+        initialize_file()
+        return expenses
+
+    with open(FILE_NAME, "r", newline="") as file:
 
         reader = csv.DictReader(file)
+
+        for row in reader:
+            expenses.append(row)
+
+    return expenses
 
         for row in reader:
             expenses.append(row)
