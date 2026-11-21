@@ -1,82 +1,130 @@
 # Personal Expense Tracker - Main Application
 # Uses basic Python concepts: lists, dictionaries, functions, loops, and conditionals
 
-expenses = []
+import csv
+import os
+from datetime import datetime
+
+FILE_NAME = "expenses.csv"
 
 
+# Create CSV file if it does not exist
+def create_file():
+    if not os.path.exists(FILE_NAME):
+        with open(FILE_NAME, "w", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerow(["Date", "Category", "Description", "Amount"])
+
+
+# Add a new expense
 def add_expense():
-    """Record a new expense with amount, category, and date."""
-    print("\n--- Add New Expense ---")
+    date = input("Enter date (DD-MM-YYYY): ")
+    category = input("Enter category (Food/Travel/Shopping/Other): ")
+    description = input("Enter description: ")
+
     try:
-        amount = float(input("Enter amount (₹): "))
+        amount = float(input("Enter amount: "))
+
         if amount <= 0:
-            print("Amount must be greater than 0.")
+            print("Amount must be greater than zero.")
             return
+
+        with open(FILE_NAME, "a", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerow([date, category, description, amount])
+
+        print("\nExpense added successfully!")
+
     except ValueError:
         print("Invalid amount! Please enter a number.")
+
+
+# View all expenses
+def view_expenses():
+    with open(FILE_NAME, "r", newline="") as file:
+        reader = csv.reader(file)
+        expenses = list(reader)
+
+    if len(expenses) <= 1:
+        print("\nNo expenses recorded yet.")
         return
 
-    category = input("Enter category (Food, Travel, Bills, Shopping, Other): ").strip().title()
-    if not category:
-        category = "Other"
+    print("\n========== ALL EXPENSES ==========")
 
-    date = input("Enter date (DD-MM-YYYY): ").strip()
-    if not date:
-        date = "Not Specified"
-
-    expense = {
-        "amount": amount,
-        "category": category,
-        "date": date
-    }
-    expenses.append(expense)
-    print(f"Success! Recorded ₹{amount:.2f} under '{category}' on {date}.")
+    for expense in expenses:
+        print(
+            f"Date: {expense[0]} | "
+            f"Category: {expense[1]} | "
+            f"Description: {expense[2]} | "
+            f"Amount: Rs. {expense[3]}"
+        )
 
 
-def view_expenses():
-    """Teammate 1: Display all recorded expenses in a clean format."""
-    print("\n[Pending] View All Expenses feature will be added by Teammate 1.")
+# Calculate total expenses
+def total_expenses():
+    total = 0
+
+    with open(FILE_NAME, "r", newline="") as file:
+        reader = csv.DictReader(file)
+
+        for row in reader:
+            total += float(row["Amount"])
+
+    print(f"\nTotal Expenses: Rs. {total:.2f}")
 
 
-def calculate_total():
-    """Teammate 2: Calculate and display total expenses."""
-    print("\n[Pending] Total Expense Calculation will be added by Teammate 2.")
+# Search expenses by category
+def search_expenses():
+    category = input("Enter category to search: ").lower()
+    found = False
+
+    with open(FILE_NAME, "r", newline="") as file:
+        reader = csv.DictReader(file)
+
+        print("\n========== SEARCH RESULTS ==========")
+
+        for row in reader:
+            if row["Category"].lower() == category:
+                print(row)
+                found = True
+
+    if not found:
+        print("No expenses found in this category.")
 
 
-def category_summary():
-    """Teammate 3: Categorise spending and show total per category."""
-    print("\n[Pending] Category-wise Spending Summary will be added by Teammate 3.")
+# Main menu
+def main():
+    create_file()
 
-
-def main_menu():
-    """Main application loop."""
     while True:
-        print("\n====================================")
-        print("     PERSONAL EXPENSE TRACKER")
-        print("====================================")
+        print("\n========== PERSONAL EXPENSE TRACKER ==========")
         print("1. Add Expense")
         print("2. View All Expenses")
         print("3. Calculate Total Expenses")
-        print("4. Category-wise Spending Summary")
+        print("4. Search Expenses by Category")
         print("5. Exit")
-        print("====================================")
 
-        choice = input("Choose an option (1-5): ").strip()
+        choice = input("\nEnter your choice (1-5): ")
 
         if choice == "1":
             add_expense()
+
         elif choice == "2":
             view_expenses()
+
         elif choice == "3":
-            calculate_total()
+            total_expenses()
+
         elif choice == "4":
-            category_summary()
+            search_expenses()
+
         elif choice == "5":
-            print("\nThank you for using Personal Expense Tracker. Goodbye!")
+            print("\nThank you for using Personal Expense Tracker!")
             break
+
         else:
-            print("\nInvalid choice! Please enter a number between 1 and 5.")
+            print("Invalid choice! Please select between 1 and 5.")
 
 
 if __name__ == "__main__":
-    main_menu()
+    main()
