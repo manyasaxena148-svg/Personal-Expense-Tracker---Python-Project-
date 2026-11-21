@@ -19,9 +19,8 @@ def add_expense(expenses):
             print("Invalid amount")
             return
 
-    except ValueError:
-        print("Invalid amount")
-
+   except ValueError:
+    print("Invalid amount")
     category = input("Enter category: ")
     date = input("Enter date: ")
 
