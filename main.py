@@ -4,24 +4,10 @@
 import csv
 import os
 from datetime import datetime
+from csv_storage import save_expense
 
 FILE_NAME = "expenses.csv"
 BUDGET_FILE = "budget.txt"
-
-
-# 1. Create required files
-def create_files():
-    if not os.path.exists(FILE_NAME):
-        with open(FILE_NAME, "w", newline="") as file:
-            writer = csv.writer(file)
-            writer.writerow(["Date", "Category", "Description", "Amount"])
-
-    if not os.path.exists(BUDGET_FILE):
-        with open(BUDGET_FILE, "w") as file:
-            file.write("0")
-
-from csv_storage import save_expense
-
 def add_expense(expenses):
 
     print("--- Add Expense ---")
@@ -49,6 +35,21 @@ def add_expense(expenses):
     save_expense(expense)
 
     print("Expense added!")
+
+
+# 1. Create required files
+def create_files():
+    if not os.path.exists(FILE_NAME):
+        with open(FILE_NAME, "w", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerow(["Date", "Category", "Description", "Amount"])
+
+    if not os.path.exists(BUDGET_FILE):
+        with open(BUDGET_FILE, "w") as file:
+            file.write("0")
+
+
+
 
 
 # 2. Read all expenses
