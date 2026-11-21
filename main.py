@@ -287,9 +287,10 @@ def initialize_file():
 
 
 
+
 def save_expense(expense):
 
-    with open(FILE_NAME, "w", newline="") as file:
+    with open(FILE_NAME, "a", newline="") as file:
         writer = csv.writer(file)
 
         writer.writerow([
@@ -297,6 +298,7 @@ def save_expense(expense):
             expense["category"],
             expense["date"]
         ])
+
 
 
 def read_expenses():
