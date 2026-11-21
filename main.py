@@ -270,3 +270,43 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# Manya's part 
+import csv
+import os
+
+FILE_NAME = "expenses.csv"
+
+def initialize_file():
+
+    if os.path.exists(FILE_NAME):
+        with open(FILE_NAME, "w") as file:
+            writer = csv.writer(file)
+            writer.writerow(["amount", "category", "date"])
+
+
+def save_expense(expense):
+
+    with open(FILE_NAME, "w", newline="") as file:
+        writer = csv.writer(file)
+
+        writer.writerow([
+            expense["amount"],
+            expense["category"],
+            expense["date"]
+        ])
+
+
+def read_expenses():
+
+    expenses = []
+
+    with open(FILE_NAME, "r") as file:
+
+        reader = csv.DictReader(file)
+
+        for row in reader:
+            expenses.append(row)
+
+    return expenses
