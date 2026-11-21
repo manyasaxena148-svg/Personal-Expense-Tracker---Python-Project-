@@ -6,23 +6,42 @@ import os
 from datetime import datetime
 
 FILE_NAME = "expenses.csv"
+BUDGET_FILE = "budget.txt"
 
 
-# Create CSV file if it does not exist
-def create_file():
+# 1. Create required files
+def create_files():
     if not os.path.exists(FILE_NAME):
         with open(FILE_NAME, "w", newline="") as file:
             writer = csv.writer(file)
             writer.writerow(["Date", "Category", "Description", "Amount"])
 
+    if not os.path.exists(BUDGET_FILE):
+        with open(BUDGET_FILE, "w") as file:
+            file.write("0")
 
-# Add a new expense
+
+# 2. Read all expenses
+def get_expenses():
+    expenses = []
+
+    with open(FILE_NAME, "r", newline="") as file:
+        reader = csv.DictReader(file)
+
+        for row in reader:
+            expenses.append(row)
+
+    return expenses
+
+
+# 3. Add a new expense
 def add_expense():
-    date = input("Enter date (DD-MM-YYYY): ")
-    category = input("Enter category (Food/Travel/Shopping/Other): ")
-    description = input("Enter description: ")
-
     try:
+        date = input("Enter date (DD-MM-YYYY): ")
+        datetime.strptime(date, "%d-%m-%Y")
+
+        category = input("Enter category (Food/Travel/Shopping/Other): ")
+        description = input("Enter description: ")
         amount = float(input("Enter amount: "))
 
         if amount <= 0:
@@ -35,17 +54,17 @@ def add_expense():
 
         print("\nExpense added successfully!")
 
+        check_budget()
+
     except ValueError:
-        print("Invalid amount! Please enter a number.")
+        print("Invalid input! Please enter a valid date and amount.")
 
 
-# View all expenses
+# 4. View all expenses
 def view_expenses():
-    with open(FILE_NAME, "r", newline="") as file:
-        reader = csv.reader(file)
-        expenses = list(reader)
+    expenses = get_expenses()
 
-    if len(expenses) <= 1:
+    if not expenses:
         print("\nNo expenses recorded yet.")
         return
 
@@ -53,48 +72,161 @@ def view_expenses():
 
     for expense in expenses:
         print(
-            f"Date: {expense[0]} | "
-            f"Category: {expense[1]} | "
-            f"Description: {expense[2]} | "
-            f"Amount: Rs. {expense[3]}"
+            f"Date: {expense['Date']} | "
+            f"Category: {expense['Category']} | "
+            f"Description: {expense['Description']} | "
+            f"Amount: Rs. {float(expense['Amount']):.2f}"
         )
 
 
-# Calculate total expenses
+# 5. Calculate total expenses
 def total_expenses():
+    expenses = get_expenses()
     total = 0
 
-    with open(FILE_NAME, "r", newline="") as file:
-        reader = csv.DictReader(file)
-
-        for row in reader:
-            total += float(row["Amount"])
+    for expense in expenses:
+        total += float(expense["Amount"])
 
     print(f"\nTotal Expenses: Rs. {total:.2f}")
 
 
-# Search expenses by category
+# 6. Category-wise spending summary
+def category_summary():
+    expenses = get_expenses()
+    categories = {}
+
+    for expense in expenses:
+        category = expense["Category"]
+        amount = float(expense["Amount"])
+
+        if category in categories:
+            categories[category] += amount
+        else:
+            categories[category] = amount
+
+    if not categories:
+        print("\nNo expenses recorded yet.")
+        return
+
+    print("\n========== CATEGORY-WISE SUMMARY ==========")
+
+    for category, amount in categories.items():
+        print(f"{category}: Rs. {amount:.2f}")
+
+
+# 7. Search expenses by category
 def search_expenses():
     category = input("Enter category to search: ").lower()
     found = False
 
-    with open(FILE_NAME, "r", newline="") as file:
-        reader = csv.DictReader(file)
+    expenses = get_expenses()
 
-        print("\n========== SEARCH RESULTS ==========")
+    print("\n========== SEARCH RESULTS ==========")
 
-        for row in reader:
-            if row["Category"].lower() == category:
-                print(row)
-                found = True
+    for expense in expenses:
+        if expense["Category"].lower() == category:
+            print(expense)
+            found = True
 
     if not found:
         print("No expenses found in this category.")
 
 
-# Main menu
+# 8. Monthly expense summary
+def monthly_summary():
+    month = input("Enter month (MM-YYYY): ")
+
+    try:
+        datetime.strptime(month, "%m-%Y")
+    except ValueError:
+        print("Invalid month format!")
+        return
+
+    expenses = get_expenses()
+    total = 0
+
+    print("\n========== MONTHLY SUMMARY ==========")
+
+    for expense in expenses:
+        expense_month = expense["Date"][3:]
+
+        if expense_month == month:
+            amount = float(expense["Amount"])
+            total += amount
+
+            print(
+                f"{expense['Date']} | "
+                f"{expense['Category']} | "
+                f"Rs. {amount:.2f}"
+            )
+
+    print(f"\nTotal for {month}: Rs. {total:.2f}")
+
+
+# 9. Find highest expense
+def highest_expense():
+    expenses = get_expenses()
+
+    if not expenses:
+        print("\nNo expenses recorded yet.")
+        return
+
+    highest = max(expenses, key=lambda x: float(x["Amount"]))
+
+    print("\n========== HIGHEST EXPENSE ==========")
+    print(f"Date: {highest['Date']}")
+    print(f"Category: {highest['Category']}")
+    print(f"Description: {highest['Description']}")
+    print(f"Amount: Rs. {float(highest['Amount']):.2f}")
+
+
+# 10. Set monthly budget
+def set_budget():
+    try:
+        budget = float(input("Enter your monthly budget: "))
+
+        if budget <= 0:
+            print("Budget must be greater than zero.")
+            return
+
+        with open(BUDGET_FILE, "w") as file:
+            file.write(str(budget))
+
+        print(f"Monthly budget set to Rs. {budget:.2f}")
+
+    except ValueError:
+        print("Please enter a valid budget amount.")
+
+
+# 11. Check budget status
+def check_budget():
+    with open(BUDGET_FILE, "r") as file:
+        budget = float(file.read())
+
+    if budget == 0:
+        return
+
+    current_month = datetime.now().strftime("%m-%Y")
+    total = 0
+
+    for expense in get_expenses():
+        if expense["Date"][3:] == current_month:
+            total += float(expense["Amount"])
+
+    print(f"\nMonthly spending: Rs. {total:.2f}")
+    print(f"Monthly budget: Rs. {budget:.2f}")
+
+    if total > budget:
+        print("WARNING! You have exceeded your monthly budget.")
+    elif total == budget:
+        print("You have reached your monthly budget.")
+    else:
+        print(f"Remaining budget: Rs. {budget - total:.2f}")
+
+
+# 12. Main menu
 def main():
-    create_file()
+    create_files()
 
     while True:
         print("\n========== PERSONAL EXPENSE TRACKER ==========")
@@ -102,28 +234,38 @@ def main():
         print("2. View All Expenses")
         print("3. Calculate Total Expenses")
         print("4. Search Expenses by Category")
-        print("5. Exit")
+        print("5. Category-wise Spending Summary")
+        print("6. Monthly Expense Summary")
+        print("7. Find Highest Expense")
+        print("8. Set Monthly Budget")
+        print("9. Check Budget Status")
+        print("10. Exit")
 
-        choice = input("\nEnter your choice (1-5): ")
+        choice = input("\nEnter your choice (1-10): ")
 
         if choice == "1":
             add_expense()
-
         elif choice == "2":
             view_expenses()
-
         elif choice == "3":
             total_expenses()
-
         elif choice == "4":
             search_expenses()
-
         elif choice == "5":
+            category_summary()
+        elif choice == "6":
+            monthly_summary()
+        elif choice == "7":
+            highest_expense()
+        elif choice == "8":
+            set_budget()
+        elif choice == "9":
+            check_budget()
+        elif choice == "10":
             print("\nThank you for using Personal Expense Tracker!")
             break
-
         else:
-            print("Invalid choice! Please select between 1 and 5.")
+            print("Invalid choice! Please select between 1 and 10.")
 
 
 if __name__ == "__main__":
