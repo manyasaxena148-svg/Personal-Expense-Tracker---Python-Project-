@@ -271,6 +271,44 @@ if __name__ == "__main__":
     main()
 #SAWAN CHOUDHARY
 
+def search_by_category(expenses):
+
+    print("--- Search by Category ---")
+
+    search = input("Enter category: ")
+
+    found = False
+
+    for expense in expenses:
+
+        if expense["category"].lower() == search.lower():
+
+            print(expense)
+            found = True
+
+    if found == False:
+        print("No expenses found")
+
+
+def search_by_date(expenses):
+
+    print("--- Search by Date ---")
+
+    search_date = input("Enter date: ")
+
+    found = False
+
+    for expense in expenses:
+
+        if expense["date"] == search_date:
+
+            print(expense)
+            found = True
+
+    if found == False:
+        print("No expenses found")
+
+
 from csv_storage import save_expense
 
 def add_expense(expenses):
