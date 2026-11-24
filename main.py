@@ -404,4 +404,20 @@ def read_expenses():
             expenses.append(row)
 
     return expenses
+def view_expenses(expenses):
 
+    print("\n--- ALL EXPENSES ---")
+
+    if len(expenses) == 0:
+        print("No expenses found")
+        return
+
+    for i in range(1, len(expenses)):
+        expense = expenses[i]
+
+        print("Expense:", i)
+        print("Amount:", expense["Amount"])
+        print("Category:", expense["Category"])
+        print("Date:", expense["Date"])
+
+    print("--------------------")
