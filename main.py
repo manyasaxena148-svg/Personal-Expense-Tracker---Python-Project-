@@ -340,7 +340,23 @@ def add_expense(expenses):
 
     print("Expense added!")
 
+#kavya's part
 
+def calculate_total(expenses):
+
+    total = "0"
+
+    if len(expenses) == 0:
+        print("No expenses recorded")
+        return
+
+    for expense in expenses:
+
+        amount = expense["amount"]
+
+        total = total + amount
+
+    print("Total Expenses: ₹", total)
 
 # Manya's part 
 
