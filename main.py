@@ -445,14 +445,26 @@ def get_expenses():
 
     return expenses
 
+
 def category_summary():
 
     categories = {}
 
-    for expense in get_expenses():
+    expenses = get_expenses()
 
-        category = expense["Category"]
-        amount = float(expense["Amount"])
+    for expense in expenses:
+
+        category = expense.get("category")
+        amount = expense.get("amount", 0)
+
+        if category is None:
+            continue
+
+        try:
+            amount = float(amount)
+        except (ValueError, TypeError):
+            print("Invalid expense amount:", amount)
+            continue
 
         if category in categories:
             categories[category] += amount
