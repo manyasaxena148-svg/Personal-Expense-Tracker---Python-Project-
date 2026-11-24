@@ -444,6 +444,7 @@ def get_expenses():
             })
 
     return expenses
+
 def category_summary():
 
     categories = {}
@@ -466,6 +467,7 @@ def category_summary():
 
     for category, amount in categories.items():
         print(f"{category}: Rs. {amount:.2f}")
+
 
 def view_expenses():
 
