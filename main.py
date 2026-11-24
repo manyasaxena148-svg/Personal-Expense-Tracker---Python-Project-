@@ -97,8 +97,8 @@ def category_summary():
 
     for expense in get_expenses():
 
-        category = expense["category"]
-        amount = float(expense["amount"])
+        category = expense["Category"]
+        amount = float(expense["Amount"])
 
         if category in categories:
             categories[category] += amount
@@ -113,7 +113,6 @@ def category_summary():
 
     for category, amount in categories.items():
         print(f"{category}: Rs. {amount:.2f}")
-
 
 
 # 7. Search expenses by category
