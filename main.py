@@ -90,13 +90,15 @@ def total_expenses():
 
 
 # 6. Category-wise spending summary
+
 def category_summary():
-    expenses = get_expenses()
+
     categories = {}
 
-    for expense in expenses:
-        category = expense["Category"]
-        amount = float(expense["Amount"])
+    for expense in get_expenses():
+
+        category = expense["category"]
+        amount = float(expense["amount"])
 
         if category in categories:
             categories[category] += amount
@@ -104,13 +106,14 @@ def category_summary():
             categories[category] = amount
 
     if not categories:
-        print("\nNo expenses recorded yet.")
+        print(YELLOW + "\nNo expenses recorded yet." + RESET)
         return
 
-    print("\n========== CATEGORY-WISE SUMMARY ==========")
+    print(CYAN + "\n========== CATEGORY SUMMARY ==========" + RESET)
 
     for category, amount in categories.items():
         print(f"{category}: Rs. {amount:.2f}")
+
 
 
 # 7. Search expenses by category
