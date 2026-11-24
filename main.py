@@ -444,7 +444,28 @@ def get_expenses():
             })
 
     return expenses
+def category_summary():
 
+    categories = {}
+
+    for expense in get_expenses():
+
+        category = expense["Category"]
+        amount = float(expense["Amount"])
+
+        if category in categories:
+            categories[category] += amount
+        else:
+            categories[category] = amount
+
+    if not categories:
+        print(YELLOW + "\nNo expenses recorded yet." + RESET)
+        return
+
+    print(CYAN + "\n========== CATEGORY SUMMARY ==========" + RESET)
+
+    for category, amount in categories.items():
+        print(f"{category}: Rs. {amount:.2f}")
 
 def view_expenses():
 
