@@ -341,22 +341,24 @@ def add_expense(expenses):
     print("Expense added!")
 
 #kavya's part
+def total_expenses():
 
-def calculate_total(expenses):
+    expenses = get_expenses()
 
-    total = "0"
-
-    if len(expenses) == 0:
-        print("No expenses recorded")
+    if not expenses:
+        print("\nNo expenses available!")
         return
 
+    total = 0
+
     for expense in expenses:
+        amount = float(expense["Amount"])
+        total += amount
 
-        amount = expense["amount"]
-
-        total = total + amount
-
-    print("Total Expenses: ₹", total)
+    print("\n========== TOTAL EXPENSES ==========")
+    print(f"Total Number of Expenses: {len(expenses)}")
+    print(f"Total Amount Spent: ₹{total:.2f}")
+    print("====================================")
 
 # Manya's part 
 
