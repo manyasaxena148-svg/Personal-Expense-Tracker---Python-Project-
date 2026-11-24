@@ -404,20 +404,67 @@ def read_expenses():
             expenses.append(row)
 
     return expenses
-def view_expenses(expenses):
+import csv
+import os
 
-    print("\n--- ALL EXPENSES ---")
+FILE_NAME = "expenses.csv"
 
-    if len(expenses) == 0:
-        print("No expenses found")
+
+def get_expenses():
+
+    expenses = []
+
+    if not os.path.exists(FILE_NAME):
+        return expenses
+
+    with open(FILE_NAME, "r", newline="") as file:
+        reader = csv.DictReader(file)
+
+        for row in reader:
+
+            if not row:
+                continue
+
+            date = (row.get("Date") or "").strip()
+            category = (row.get("Category") or "").strip()
+            amount = (row.get("Amount") or "").strip()
+
+            if not date or not category or not amount:
+                continue
+
+            try:
+                float(amount)
+            except ValueError:
+                continue
+
+            expenses.append({
+                "Date": date,
+                "Category": category,
+                "Amount": amount
+            })
+
+    return expenses
+
+
+def view_expenses():
+
+    expenses = get_expenses()
+
+    if not expenses:
+        print("\nNo expenses recorded yet.")
         return
 
-    for i in range(1, len(expenses)):
-        expense = expenses[i]
+    print("\n========== ALL EXPENSES ==========")
 
-        print("Expense:", i)
-        print("Amount:", expense["Amount"])
-        print("Category:", expense["Category"])
-        print("Date:", expense["Date"])
+    for expense in expenses:
 
-    print("--------------------")
+        print(
+            f"Date: {expense['Date']} | "
+            f"Category: {expense['Category']} | "
+            f"Amount: Rs. {float(expense['Amount']):.2f}"
+        )
+
+
+if __name__ == "__main__":
+    view_expenses()
+
